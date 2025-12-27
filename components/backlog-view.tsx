@@ -269,6 +269,7 @@ export function BacklogView({
         onSave={handleSaveTodo}
         todo={editingTodo}
         selectedDate={selectedDate}
+        existingCategories={[...new Set(todos.map(t => t.category))].filter(Boolean).sort()}
       />
 
       <SettingsDialog
