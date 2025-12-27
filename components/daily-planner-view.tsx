@@ -1,12 +1,14 @@
 "use client"
 
 import { useState, useMemo, useEffect } from "react"
+import { useTranslations } from 'next-intl'
 import type { Todo, CategoryColorMapping } from "@/lib/types"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { addMinutes, format, parse, startOfHour, differenceInHours } from "date-fns"
-import { de } from "date-fns/locale"
+import { de, enUS } from "date-fns/locale"
 import { getCategoryColor } from "@/lib/colors"
 import { cn } from "@/lib/utils"
+import { useI18n } from '@/components/i18n-provider'
 
 interface ScheduledTask {
   todo: Todo
@@ -45,10 +47,13 @@ export function DailyPlannerView({
   availableHours,
   categoryColorMappings,
 }: DailyPlannerViewProps) {
+  const t = useTranslations()
+  const { locale } = useI18n()
   const [now, setNow] = useState(new Date())
 
+  const dateLocale = locale === 'de' ? de : enUS
   // Format the selected date for display
-  const formattedDate = format(new Date(selectedDate), "EEEE, d. MMMM", { locale: de })
+  const formattedDate = format(new Date(selectedDate), "EEEE, d. MMMM", { locale: dateLocale })
 
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 60000)
@@ -286,7 +291,7 @@ export function DailyPlannerView({
           {categoryStats.length > 0 && (
             <div className="flex items-center gap-1 ml-2 pl-2 border-l border-gray-300 dark:border-gray-600">
               <span className="font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap">
-                Gesamt: {formatTime(categoryStats.reduce((sum, stat) => sum + stat.totalMinutes, 0))}
+                {t('common.total')}: {formatTime(categoryStats.reduce((sum, stat) => sum + stat.totalMinutes, 0))}
               </span>
             </div>
           )}
@@ -343,7 +348,7 @@ export function DailyPlannerView({
                         "bg-black/10 dark:bg-white/10",
                       )}
                     >
-                      FEST
+                      {t('common.fixed')}
                     </span>
                   )}
                 </div>
@@ -365,9 +370,9 @@ export function DailyPlannerView({
           {schedule.length === 0 && (
             <div className="flex items-center justify-center h-full">
               <p className="text-center text-gray-500 dark:text-gray-400">
-                Keine aktiven Aufgaben für diesen Tag.
+                {t('dailyPlanner.noActiveTasks')}
                 <br />
-                Wechseln Sie zur Planung-Ansicht um Aufgaben hinzuzufügen.
+                {t('dailyPlanner.switchToPlanning')}
               </p>
             </div>
           )}

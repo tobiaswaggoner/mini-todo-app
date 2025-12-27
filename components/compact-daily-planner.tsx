@@ -1,12 +1,14 @@
 "use client"
 
 import { useMemo } from "react"
+import { useTranslations } from 'next-intl'
 import { format as formatDate, addMinutes, parse } from "date-fns"
-import { de } from "date-fns/locale"
+import { de, enUS } from "date-fns/locale"
 import type { Todo, CategoryColorMapping } from "@/lib/types"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { getCategoryColor } from "@/lib/colors"
 import { cn } from "@/lib/utils"
+import { useI18n } from '@/components/i18n-provider'
 
 interface ScheduledTask {
   todo: Todo
@@ -38,8 +40,12 @@ export function CompactDailyPlanner({
   todos,
   categoryColorMappings,
 }: CompactDailyPlannerProps) {
+  const t = useTranslations()
+  const { locale } = useI18n()
+  const dateLocale = locale === 'de' ? de : enUS
+
   // Format the date for the title
-  const formattedDate = formatDate(new Date(selectedDate), "EEEE, d. MMM", { locale: de })
+  const formattedDate = formatDate(new Date(selectedDate), "EEEE, d. MMM", { locale: dateLocale })
   const isToday = formatDate(new Date(), "yyyy-MM-dd") === selectedDate
   const { schedule, dayStart, totalDuration } = useMemo(() => {
     const dayStart = parse(startTime, "HH:mm", new Date())
@@ -199,7 +205,7 @@ export function CompactDailyPlanner({
     <Card className="h-full">
       <CardHeader className="pb-2">
         <CardTitle className="text-lg capitalize">
-          {isToday ? "Heute" : formattedDate}
+          {isToday ? t('common.today') : formattedDate}
         </CardTitle>
       </CardHeader>
       <CardContent className="p-2">
@@ -236,7 +242,7 @@ export function CompactDailyPlanner({
                     ({formatDate(task.startTime, "HH:mm")} - {formatDate(task.endTime, "HH:mm")},{" "}
                     {formatDuration(actualDuration)})
                     {task.isFixed && (
-                      <span className={cn("ml-1 font-bold", `${color.text} ${color.darkText}`)}>[FEST]</span>
+                      <span className={cn("ml-1 font-bold", `${color.text} ${color.darkText}`)}>[{t('common.fixed')}]</span>
                     )}
                   </span>
                 </p>
@@ -246,7 +252,7 @@ export function CompactDailyPlanner({
 
           {schedule.length === 0 && (
             <div className="flex items-center justify-center h-full">
-              <p className="text-center text-gray-500 dark:text-gray-400 text-sm">Keine aktiven Aufgaben</p>
+              <p className="text-center text-gray-500 dark:text-gray-400 text-sm">{t('dailyPlanner.noActiveTasksShort')}</p>
             </div>
           )}
         </div>

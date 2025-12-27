@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from 'next-intl'
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import type { Todo, CategoryColorMapping } from "@/lib/types"
@@ -23,6 +24,7 @@ export function SortableTodoItem({
   onToggleActive: (id: string) => void
   categoryColorMappings: CategoryColorMapping[]
 }) {
+  const t = useTranslations('aria')
   const isFixedTime = !!todo.fixedTime
 
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
@@ -54,8 +56,8 @@ export function SortableTodoItem({
         <button
           {...attributes}
           {...listeners}
-          className="cursor-grab touch-none p-0.5 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 mt-0.5" // mt-0.5 für bessere Ausrichtung
-          aria-label="Aufgabe verschieben"
+          className="cursor-grab touch-none p-0.5 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 mt-0.5"
+          aria-label={t('moveTask')}
         >
           {isFixedTime ? <Clock className="h-4 w-4 text-blue-500" /> : <GripVertical className="h-4 w-4" />}
         </button>
@@ -114,8 +116,8 @@ export function SortableTodoItem({
             variant="ghost"
             size="icon"
             onClick={() => onToggleActive(todo.id)}
-            aria-label={todo.active ? "Aufgabe deaktivieren" : "Aufgabe aktivieren"}
-            className="h-6 w-6 p-0 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100" // h-6 w-6 p-0 für minimale Größe
+            aria-label={todo.active ? t('deactivateTask') : t('activateTask')}
+            className="h-6 w-6 p-0 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
           >
             {todo.active ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}{" "}
             {/* h-3 w-3 für kleinere Icons */}
@@ -124,7 +126,7 @@ export function SortableTodoItem({
             variant="ghost"
             size="icon"
             onClick={onEdit}
-            aria-label="Aufgabe bearbeiten"
+            aria-label={t('editTask')}
             className="h-6 w-6 p-0 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
           >
             <Pencil className="h-3 w-3" />
@@ -133,7 +135,7 @@ export function SortableTodoItem({
             variant="ghost"
             size="icon"
             onClick={onDelete}
-            aria-label="Aufgabe löschen"
+            aria-label={t('deleteTask')}
             className="h-6 w-6 p-0 text-red-500 hover:text-red-600"
           >
             <Trash2 className="h-3 w-3" />

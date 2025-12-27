@@ -1,10 +1,12 @@
 "use client"
 
+import { useTranslations } from 'next-intl'
 import { useAuth } from './auth-provider'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card'
 
 export function LoginPage() {
+  const t = useTranslations('auth')
   const { signInWithGoogle, signInWithGitHub, loading } = useAuth()
 
   return (
@@ -13,7 +15,7 @@ export function LoginPage() {
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Mini Todo Planner</CardTitle>
           <CardDescription>
-            Melden Sie sich an, um Ihre Aufgaben zu verwalten
+            {t('loginDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -24,7 +26,7 @@ export function LoginPage() {
             variant="outline"
           >
             <GoogleIcon className="mr-2 h-4 w-4" />
-            Mit Google anmelden
+            {t('signInWithGoogle')}
           </Button>
           <Button
             onClick={signInWithGitHub}
@@ -33,7 +35,7 @@ export function LoginPage() {
             variant="outline"
           >
             <GitHubIcon className="mr-2 h-4 w-4" />
-            Mit GitHub anmelden
+            {t('signInWithGitHub')}
           </Button>
         </CardContent>
       </Card>

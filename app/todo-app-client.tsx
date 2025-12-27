@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
+import { useTranslations } from 'next-intl'
 import { format } from "date-fns"
 import { useTodos } from "@/hooks/use-todos"
 import { useSettings } from "@/hooks/use-settings"
@@ -17,6 +18,7 @@ import { Button } from "@/components/ui/button"
 import { List, LayoutGrid, Loader2 } from "lucide-react"
 
 export function TodoAppClient() {
+  const t = useTranslations('navigation')
   const { user, loading: authLoading } = useAuth()
 
   // Selected date state (default to today)
@@ -96,7 +98,7 @@ export function TodoAppClient() {
             className="flex items-center gap-2"
           >
             <List className="h-4 w-4" />
-            Planung
+            {t('planning')}
           </Button>
           <Button
             variant={view === "planner" ? "default" : "ghost"}
@@ -104,7 +106,7 @@ export function TodoAppClient() {
             className="flex items-center gap-2"
           >
             <LayoutGrid className="h-4 w-4" />
-            Tagesplan
+            {t('dailyPlan')}
           </Button>
         </div>
 

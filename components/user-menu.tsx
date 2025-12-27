@@ -1,11 +1,13 @@
 "use client"
 
 import { useState, useRef, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { useAuth } from './auth-provider'
 import { Button } from '@/components/ui/button'
 import { LogOut, User } from 'lucide-react'
 
 export function UserMenu() {
+  const t = useTranslations('auth')
   const { user, signOut } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -56,7 +58,7 @@ export function UserMenu() {
             className="w-full px-3 py-2 text-sm text-left flex items-center gap-2 hover:bg-accent"
           >
             <LogOut className="h-4 w-4" />
-            Abmelden
+            {t('signOut')}
           </button>
         </div>
       )}

@@ -1,8 +1,9 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
+import { useTranslations } from 'next-intl'
 import { format } from "date-fns"
-import { de } from "date-fns/locale"
+import { de, enUS } from "date-fns/locale"
 import type { WeekdayDefault, CategoryColorMapping } from "@/lib/types"
 import {
   Dialog,
@@ -14,10 +15,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Trash2, RotateCcw, Plus, ChevronDown, Menu } from "lucide-react"
-import { COLORS } from "@/lib/colors"
-
-const WEEKDAY_NAMES = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"]
+import { Trash2, RotateCcw, Plus, ChevronDown, Menu, Globe } from "lucide-react"
+import { COLORS, getColorName } from "@/lib/colors"
+import { useI18n } from '@/components/i18n-provider'
+import { locales, localeNames, type Locale } from '@/lib/i18n/config'
 
 interface SettingsDialogProps {
   isOpen: boolean
@@ -48,7 +49,9 @@ export function SettingsDialog({
   categoryColorMappings,
   setCategoryColorMappings,
 }: SettingsDialogProps) {
-  const [activeTab, setActiveTab] = useState<"day" | "weekdays" | "colors">("day")
+  const t = useTranslations()
+  const { locale, setLocale } = useI18n()
+  const [activeTab, setActiveTab] = useState<"day" | "weekdays" | "colors" | "language">("day")
   const [newCategory, setNewCategory] = useState("")
   const [openColorPicker, setOpenColorPicker] = useState<string | null>(null)
   const [isTabMenuOpen, setIsTabMenuOpen] = useState(false)
@@ -69,14 +72,16 @@ export function SettingsDialog({
   }, [])
 
   const TAB_LABELS = {
-    day: "Individueller Tag",
-    weekdays: "Wochentag-Standards",
-    colors: "Kategoriefarben"
+    day: t('settings.individualDay'),
+    weekdays: t('settings.weekdayDefaults'),
+    colors: t('settings.categoryColors'),
+    language: t('settings.language'),
   }
 
+  const dateLocale = locale === 'de' ? de : enUS
   const currentDate = new Date(selectedDate)
   const weekday = currentDate.getDay()
-  const formattedDate = format(currentDate, "EEEE, d. MMMM", { locale: de })
+  const formattedDate = format(currentDate, "EEEE, d. MMMM", { locale: dateLocale })
 
   const handleStartTimeChange = (value: string) => {
     updateDaySettings({ startTime: value })
@@ -116,7 +121,7 @@ export function SettingsDialog({
     const trimmed = newCategory.trim()
     if (!trimmed) return
     if (categoryColorMappings.some(m => m.category.toLowerCase() === trimmed.toLowerCase())) {
-      alert("Diese Kategorie existiert bereits.")
+      alert(t('settings.categoryExists'))
       return
     }
     const newMappings = [...categoryColorMappings, { category: trimmed, colorIndex: categoryColorMappings.length % COLORS.length }]
@@ -126,33 +131,45 @@ export function SettingsDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-visible">
+      <DialogContent className="max-w-3xl max-h-[80vh] overflow-visible">
         <DialogHeader>
-          <DialogTitle>Einstellungen</DialogTitle>
+          <DialogTitle>{t('settings.title')}</DialogTitle>
         </DialogHeader>
 
         {/* Tabs - Desktop */}
-        <div className="hidden sm:flex gap-2 border-b pb-2">
+        <div className="hidden sm:flex flex-wrap gap-1 border-b pb-2">
           <Button
             variant={activeTab === "day" ? "default" : "ghost"}
             size="sm"
+            className="text-xs px-2"
             onClick={() => setActiveTab("day")}
           >
-            Individueller Tag
+            {t('settings.individualDay')}
           </Button>
           <Button
             variant={activeTab === "weekdays" ? "default" : "ghost"}
             size="sm"
+            className="text-xs px-2"
             onClick={() => setActiveTab("weekdays")}
           >
-            Wochentag-Standards
+            {t('settings.weekdayDefaults')}
           </Button>
           <Button
             variant={activeTab === "colors" ? "default" : "ghost"}
             size="sm"
+            className="text-xs px-2"
             onClick={() => setActiveTab("colors")}
           >
-            Kategoriefarben
+            {t('settings.categoryColors')}
+          </Button>
+          <Button
+            variant={activeTab === "language" ? "default" : "ghost"}
+            size="sm"
+            className="text-xs px-2"
+            onClick={() => setActiveTab("language")}
+          >
+            <Globe className="mr-1 h-3 w-3" />
+            {t('settings.language')}
           </Button>
         </div>
 
@@ -170,7 +187,7 @@ export function SettingsDialog({
             </Button>
             {isTabMenuOpen && (
               <div className="absolute left-0 right-0 top-full mt-1 z-50 bg-background border rounded-md shadow-lg py-1">
-                {(["day", "weekdays", "colors"] as const).map((tab) => (
+                {(["day", "weekdays", "colors", "language"] as const).map((tab) => (
                   <button
                     key={tab}
                     onClick={() => { setActiveTab(tab); setIsTabMenuOpen(false) }}
@@ -192,20 +209,20 @@ export function SettingsDialog({
               {isOverridden && (
                 <Button variant="outline" size="sm" className="h-7 text-xs" onClick={resetToDefault}>
                   <RotateCcw className="mr-1 h-3 w-3" />
-                  Zurücksetzen
+                  {t('common.reset')}
                 </Button>
               )}
             </div>
 
             {isOverridden && (
               <p className="text-xs text-amber-600 dark:text-amber-400">
-                Individuelle Einstellungen aktiv.
+                {t('settings.customSettingsActive')}
               </p>
             )}
 
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1">
-                <Label htmlFor="day-start-time" className="text-xs">Startzeit</Label>
+                <Label htmlFor="day-start-time" className="text-xs">{t('settings.startTime')}</Label>
                 <Input
                   id="day-start-time"
                   type="time"
@@ -215,7 +232,7 @@ export function SettingsDialog({
                 />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="day-hours" className="text-xs">Stunden</Label>
+                <Label htmlFor="day-hours" className="text-xs">{t('settings.hours')}</Label>
                 <Input
                   id="day-hours"
                   type="number"
@@ -229,7 +246,7 @@ export function SettingsDialog({
             </div>
 
             <p className="text-xs text-muted-foreground">
-              {isOverridden ? "Überschreibt den Wochentag-Standard." : `Nutzt ${WEEKDAY_NAMES[weekday]}-Standard.`}
+              {isOverridden ? t('settings.overridesDefault') : t('settings.usesDefault', { weekday: t(`weekdays.${weekday}`) })}
             </p>
           </div>
         )}
@@ -238,42 +255,45 @@ export function SettingsDialog({
         {activeTab === "weekdays" && (
           <div className="space-y-2">
             <p className="text-xs text-muted-foreground">
-              Standardwerte für jeden Wochentag.
+              {t('settings.defaultValuesForWeekdays')}
             </p>
 
             {/* Header */}
             <div className="grid grid-cols-[1fr_70px_60px] gap-2 px-2 text-xs text-muted-foreground font-medium">
-              <span>Tag</span>
-              <span>Start</span>
-              <span>Std.</span>
+              <span>{t('settings.day')}</span>
+              <span>{t('settings.start')}</span>
+              <span>{t('settings.hrs')}</span>
             </div>
 
             <div className="space-y-1 max-h-[40vh] overflow-y-auto">
-              {weekdayDefaults.map((wd, index) => (
-                <div
-                  key={index}
-                  className="grid grid-cols-[1fr_70px_60px] gap-2 items-center px-2 py-1 rounded bg-gray-50 dark:bg-gray-800"
-                >
-                  <span className="text-sm truncate">
-                    {WEEKDAY_NAMES[index].slice(0, 2)}
-                    <span className="hidden sm:inline">{WEEKDAY_NAMES[index].slice(2)}</span>
-                  </span>
-                  <Input
-                    type="time"
-                    value={wd.startTime}
-                    onChange={(e) => handleWeekdayStartTimeChange(index, e.target.value)}
-                    className="h-7 text-xs px-1"
-                  />
-                  <Input
-                    type="number"
-                    min="0.5"
-                    step="0.5"
-                    value={wd.availableHours}
-                    onChange={(e) => handleWeekdayHoursChange(index, e.target.value)}
-                    className="h-7 text-xs px-1"
-                  />
-                </div>
-              ))}
+              {weekdayDefaults.map((wd, index) => {
+                const weekdayName = t(`weekdays.${index}`)
+                return (
+                  <div
+                    key={index}
+                    className="grid grid-cols-[1fr_70px_60px] gap-2 items-center px-2 py-1 rounded bg-gray-50 dark:bg-gray-800"
+                  >
+                    <span className="text-sm truncate">
+                      {weekdayName.slice(0, 2)}
+                      <span className="hidden sm:inline">{weekdayName.slice(2)}</span>
+                    </span>
+                    <Input
+                      type="time"
+                      value={wd.startTime}
+                      onChange={(e) => handleWeekdayStartTimeChange(index, e.target.value)}
+                      className="h-7 text-xs px-1"
+                    />
+                    <Input
+                      type="number"
+                      min="0.5"
+                      step="0.5"
+                      value={wd.availableHours}
+                      onChange={(e) => handleWeekdayHoursChange(index, e.target.value)}
+                      className="h-7 text-xs px-1"
+                    />
+                  </div>
+                )
+              })}
             </div>
           </div>
         )}
@@ -282,13 +302,13 @@ export function SettingsDialog({
         {activeTab === "colors" && (
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              Hier können Sie die Farben für Ihre Kategorien anpassen.
+              {t('settings.categoryColorsDescription')}
             </p>
 
             {/* Add new category */}
             <div className="flex gap-2">
               <Input
-                placeholder="Neue Kategorie..."
+                placeholder={t('settings.newCategoryPlaceholder')}
                 value={newCategory}
                 onChange={(e) => setNewCategory(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleAddCategory()}
@@ -296,13 +316,13 @@ export function SettingsDialog({
               />
               <Button size="sm" onClick={handleAddCategory} disabled={!newCategory.trim()}>
                 <Plus className="mr-1 h-4 w-4" />
-                Hinzufügen
+                {t('common.add')}
               </Button>
             </div>
 
             {categoryColorMappings.length === 0 ? (
               <p className="text-center text-gray-500 py-4">
-                Noch keine Kategorien vorhanden.
+                {t('settings.noCategoriesYet')}
               </p>
             ) : (
               <div className="space-y-1 max-h-[35vh] overflow-y-auto">
@@ -322,7 +342,7 @@ export function SettingsDialog({
                           <div
                             className={`flex-1 border-l-2 px-1.5 py-0.5 rounded-r text-xs ${COLORS[mapping.colorIndex].bg} ${COLORS[mapping.colorIndex].border} ${COLORS[mapping.colorIndex].text} ${COLORS[mapping.colorIndex].darkBg} ${COLORS[mapping.colorIndex].darkBorder} ${COLORS[mapping.colorIndex].darkText}`}
                           >
-                            {COLORS[mapping.colorIndex].name}
+                            {getColorName(mapping.colorIndex, t)}
                           </div>
                           <ChevronDown className="h-3 w-3 opacity-50 shrink-0" />
                         </button>
@@ -341,7 +361,7 @@ export function SettingsDialog({
                                 <div
                                   className={`border-l-2 px-1.5 py-0.5 rounded-r text-xs ${color.bg} ${color.border} ${color.text} ${color.darkBg} ${color.darkBorder} ${color.darkText}`}
                                 >
-                                  {color.name}
+                                  {getColorName(index, t)}
                                 </div>
                               </button>
                             ))}
@@ -360,6 +380,33 @@ export function SettingsDialog({
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Language Tab */}
+        {activeTab === "language" && (
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              {t('settings.selectLanguage')}
+            </p>
+            <div className="space-y-2">
+              {locales.map((loc) => (
+                <button
+                  key={loc}
+                  onClick={() => setLocale(loc)}
+                  className={`w-full flex items-center justify-between px-4 py-3 rounded-lg border transition-colors ${
+                    locale === loc
+                      ? "border-primary bg-primary/10"
+                      : "border-gray-200 dark:border-gray-700 hover:bg-accent"
+                  }`}
+                >
+                  <span className="text-sm font-medium">{localeNames[loc]}</span>
+                  {locale === loc && (
+                    <div className="h-2 w-2 rounded-full bg-primary" />
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
         )}
       </DialogContent>

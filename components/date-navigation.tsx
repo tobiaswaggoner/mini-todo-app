@@ -1,10 +1,12 @@
 "use client"
 
 import { useState, useRef, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { format, addDays, subDays, isToday } from 'date-fns'
-import { de } from 'date-fns/locale'
+import { de, enUS } from 'date-fns/locale'
 import { ChevronLeft, ChevronRight, CalendarIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useI18n } from '@/components/i18n-provider'
 
 interface DateNavigationProps {
   selectedDate: string
@@ -12,12 +14,15 @@ interface DateNavigationProps {
 }
 
 export function DateNavigation({ selectedDate, onDateChange }: DateNavigationProps) {
+  const t = useTranslations('common')
+  const { locale } = useI18n()
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const currentDate = new Date(selectedDate)
   const isTodaySelected = isToday(currentDate)
 
-  const formattedDate = format(currentDate, 'd. MMM', { locale: de })
+  const dateLocale = locale === 'de' ? de : enUS
+  const formattedDate = format(currentDate, 'd. MMM', { locale: dateLocale })
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -65,7 +70,7 @@ export function DateNavigation({ selectedDate, onDateChange }: DateNavigationPro
               className="shrink-0"
               onClick={() => handleDateChange(format(new Date(), 'yyyy-MM-dd'))}
             >
-              Heute
+              {t('today')}
             </Button>
 
             <input

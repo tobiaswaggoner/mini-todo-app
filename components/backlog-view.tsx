@@ -3,8 +3,9 @@
 import type React from "react"
 import type { Todo, CategoryColorMapping, WeekdayDefault } from "@/lib/types"
 import { useState, useRef, useEffect } from "react"
+import { useTranslations } from 'next-intl'
 import { format } from "date-fns"
-import { de } from "date-fns/locale"
+import { de, enUS } from "date-fns/locale"
 import {
   DndContext,
   closestCenter,
@@ -22,6 +23,7 @@ import { PlusCircle, Upload, Download, Settings, MoreVertical } from "lucide-rea
 import { EditTodoDialog } from "./edit-todo-dialog"
 import { SettingsDialog } from "./settings-dialog"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import { useI18n } from '@/components/i18n-provider'
 
 interface BacklogViewProps {
   todos: Todo[]
@@ -54,6 +56,8 @@ export function BacklogView({
   setCategoryColorMappings,
   moveTodoToDate,
 }: BacklogViewProps) {
+  const t = useTranslations()
+  const { locale } = useI18n()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null)
@@ -71,8 +75,9 @@ export function BacklogView({
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
+  const dateLocale = locale === 'de' ? de : enUS
   // Format the selected date for display
-  const formattedDate = format(new Date(selectedDate), "EEEE, d. MMMM", { locale: de })
+  const formattedDate = format(new Date(selectedDate), "EEEE, d. MMMM", { locale: dateLocale })
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -133,7 +138,7 @@ export function BacklogView({
 
   const handleExport = () => {
     if (todos.length === 0) {
-      alert("Keine Aufgaben zum Exportieren vorhanden.")
+      alert(t('backlog.exportError'))
       return
     }
     const dataStr = JSON.stringify(todos, null, 2)
@@ -166,12 +171,12 @@ export function BacklogView({
             }))
             onTodosChange(todosWithActive)
           } else {
-            alert("Fehler: Die importierte Datei hat kein gültiges Format.")
+            alert(t('backlog.importFormatError'))
           }
         }
       } catch (error) {
-        console.error("Fehler beim Importieren der Datei:", error)
-        alert("Die Datei konnte nicht gelesen werden. Stellen Sie sicher, dass es eine gültige JSON-Datei ist.")
+        console.error("Import error:", error)
+        alert(t('backlog.importReadError'))
       }
     }
     reader.readAsText(file)
@@ -190,7 +195,7 @@ export function BacklogView({
 
               <Button size="sm" onClick={openNewTodoDialog}>
                 <PlusCircle className="mr-2 h-4 w-4" />
-                Neu
+                {t('common.new')}
               </Button>
 
               <div className="relative" ref={menuRef}>
@@ -204,21 +209,21 @@ export function BacklogView({
                       className="w-full px-3 py-2 text-sm text-left flex items-center gap-2 hover:bg-accent"
                     >
                       <Upload className="h-4 w-4" />
-                      Import
+                      {t('common.import')}
                     </button>
                     <button
                       onClick={() => { handleExport(); setIsMenuOpen(false) }}
                       className="w-full px-3 py-2 text-sm text-left flex items-center gap-2 hover:bg-accent"
                     >
                       <Download className="h-4 w-4" />
-                      Export
+                      {t('common.export')}
                     </button>
                     <button
                       onClick={() => { setIsSettingsOpen(true); setIsMenuOpen(false) }}
                       className="w-full px-3 py-2 text-sm text-left flex items-center gap-2 hover:bg-accent"
                     >
                       <Settings className="h-4 w-4" />
-                      Einstellungen
+                      {t('common.settings')}
                     </button>
                   </div>
                 )}
@@ -242,7 +247,7 @@ export function BacklogView({
                     ))
                   ) : (
                     <p className="text-center text-gray-500 dark:text-gray-400 py-4">
-                      Keine Aufgaben im Backlog. Importieren Sie eine Liste oder fügen Sie eine neue Aufgabe hinzu.
+                      {t('backlog.noTasks')}
                     </p>
                   )}
                 </div>

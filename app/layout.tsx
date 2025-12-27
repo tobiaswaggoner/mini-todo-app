@@ -6,6 +6,7 @@ import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
 import { ThemeProvider } from "@/components/theme-provider"
 import { AuthProvider } from "@/components/auth-provider"
+import { I18nProvider } from "@/components/i18n-provider"
 import "./globals.css"
 
 export const metadata: Metadata = {
@@ -19,7 +20,9 @@ function Providers({ children }: { children: React.ReactNode }) {
     <Suspense fallback={<div className="min-h-screen bg-white dark:bg-gray-900" />}>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
         <AuthProvider>
-          {children}
+          <I18nProvider>
+            {children}
+          </I18nProvider>
         </AuthProvider>
       </ThemeProvider>
     </Suspense>

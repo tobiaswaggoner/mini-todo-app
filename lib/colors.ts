@@ -1,5 +1,4 @@
-// Eine vordefinierte Palette von Farben für die Kategorien.
-// Sortiert nach Farbrad: Rot → Orange → Gelb → Grün → Blau → Violett → Pink
+// Color palette for categories, sorted by color wheel
 export const COLORS = [
   {
     bg: "bg-red-200",
@@ -8,7 +7,7 @@ export const COLORS = [
     darkBg: "dark:bg-red-900",
     darkBorder: "dark:border-red-500",
     darkText: "dark:text-red-100",
-    name: "Rot",
+    nameKey: "red",
   },
   {
     bg: "bg-orange-200",
@@ -17,7 +16,7 @@ export const COLORS = [
     darkBg: "dark:bg-orange-900",
     darkBorder: "dark:border-orange-500",
     darkText: "dark:text-orange-100",
-    name: "Orange",
+    nameKey: "orange",
   },
   {
     bg: "bg-yellow-200",
@@ -26,7 +25,7 @@ export const COLORS = [
     darkBg: "dark:bg-yellow-900",
     darkBorder: "dark:border-yellow-500",
     darkText: "dark:text-yellow-100",
-    name: "Gelb",
+    nameKey: "yellow",
   },
   {
     bg: "bg-lime-200",
@@ -35,7 +34,7 @@ export const COLORS = [
     darkBg: "dark:bg-lime-900",
     darkBorder: "dark:border-lime-500",
     darkText: "dark:text-lime-100",
-    name: "Limette",
+    nameKey: "lime",
   },
   {
     bg: "bg-green-200",
@@ -44,7 +43,7 @@ export const COLORS = [
     darkBg: "dark:bg-green-900",
     darkBorder: "dark:border-green-500",
     darkText: "dark:text-green-100",
-    name: "Grün",
+    nameKey: "green",
   },
   {
     bg: "bg-teal-200",
@@ -53,7 +52,7 @@ export const COLORS = [
     darkBg: "dark:bg-teal-900",
     darkBorder: "dark:border-teal-500",
     darkText: "dark:text-teal-100",
-    name: "Türkis",
+    nameKey: "teal",
   },
   {
     bg: "bg-sky-200",
@@ -62,7 +61,7 @@ export const COLORS = [
     darkBg: "dark:bg-sky-900",
     darkBorder: "dark:border-sky-500",
     darkText: "dark:text-sky-100",
-    name: "Himmelblau",
+    nameKey: "sky",
   },
   {
     bg: "bg-indigo-200",
@@ -71,7 +70,7 @@ export const COLORS = [
     darkBg: "dark:bg-indigo-900",
     darkBorder: "dark:border-indigo-500",
     darkText: "dark:text-indigo-100",
-    name: "Indigo",
+    nameKey: "indigo",
   },
   {
     bg: "bg-violet-200",
@@ -80,7 +79,7 @@ export const COLORS = [
     darkBg: "dark:bg-violet-900",
     darkBorder: "dark:border-violet-500",
     darkText: "dark:text-violet-100",
-    name: "Violett",
+    nameKey: "violet",
   },
   {
     bg: "bg-fuchsia-200",
@@ -89,7 +88,7 @@ export const COLORS = [
     darkBg: "dark:bg-fuchsia-900",
     darkBorder: "dark:border-fuchsia-500",
     darkText: "dark:text-fuchsia-100",
-    name: "Fuchsia",
+    nameKey: "fuchsia",
   },
   {
     bg: "bg-rose-200",
@@ -98,7 +97,7 @@ export const COLORS = [
     darkBg: "dark:bg-rose-900",
     darkBorder: "dark:border-rose-500",
     darkText: "dark:text-rose-100",
-    name: "Rose",
+    nameKey: "rose",
   },
   {
     bg: "bg-slate-200",
@@ -107,9 +106,15 @@ export const COLORS = [
     darkBg: "dark:bg-slate-900",
     darkBorder: "dark:border-slate-500",
     darkText: "dark:text-slate-100",
-    name: "Grau",
+    nameKey: "slate",
   },
 ]
+
+// Helper to get translated color name
+export function getColorName(colorIndex: number, t: (key: string) => string): string {
+  const color = COLORS[colorIndex]
+  return color ? t(`colors.${color.nameKey}`) : ''
+}
 
 export interface CategoryColorMapping {
   category: string
@@ -117,44 +122,38 @@ export interface CategoryColorMapping {
 }
 
 /**
- * Erzeugt einen einfachen Hash-Code für einen String.
- * @param str Der Eingabe-String (z.B. die Kategorie).
- * @returns Ein numerischer Hash-Code.
+ * Creates a simple hash code for a string.
  */
 function hashCode(str: string): number {
   let hash = 0
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i)
     hash = (hash << 5) - hash + char
-    hash |= 0 // Konvertiert zu 32bit Integer
+    hash |= 0
   }
   return hash
 }
 
 /**
- * Wählt eine konsistente Farbe für eine gegebene Kategorie.
- * @param category Die Kategorie der Aufgabe.
- * @param fixedMappings Optionale feste Zuordnungen von Kategorien zu Farben.
- * @returns Ein Farbobjekt aus der Palette.
+ * Gets a consistent color for a given category.
  */
 export function getCategoryColor(category: string, fixedMappings: CategoryColorMapping[] = []) {
   if (!category) return COLORS[0]
 
-  // Erst nach festen Zuordnungen suchen
+  // Check for fixed mappings first
   const fixedMapping = fixedMappings.find((mapping) => mapping.category === category)
   if (fixedMapping && fixedMapping.colorIndex >= 0 && fixedMapping.colorIndex < COLORS.length) {
     return COLORS[fixedMapping.colorIndex]
   }
 
-  // Fallback auf Hash-basierte Zuordnung
+  // Fallback to hash-based assignment
   const hash = hashCode(category)
   const index = Math.abs(hash) % COLORS.length
   return COLORS[index]
 }
 
 /**
- * Gibt alle verfügbaren Farben zurück.
- * @returns Array aller verfügbaren Farben mit ihren Namen.
+ * Returns all available colors.
  */
 export function getAvailableColors() {
   return COLORS

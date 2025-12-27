@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
+import { useTranslations } from 'next-intl'
 import type { Todo } from "@/lib/types"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -26,6 +27,8 @@ export function EditTodoDialog({
   selectedDate,
   existingCategories = [],
 }: EditTodoDialogProps) {
+  const t = useTranslations('editTodo')
+  const tCommon = useTranslations('common')
   const [description, setDescription] = useState("")
   const [category, setCategory] = useState("")
   const [duration, setDuration] = useState(30)
@@ -68,7 +71,7 @@ export function EditTodoDialog({
 
   const handleSubmit = () => {
     if (!description.trim() || !category.trim() || duration <= 0) {
-      alert("Bitte füllen Sie alle Felder korrekt aus.")
+      alert(t('validationError'))
       return
     }
     onSave({
@@ -91,26 +94,24 @@ export function EditTodoDialog({
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-[380px]">
         <DialogHeader>
-          <DialogTitle className="text-base">{todo ? "Aufgabe bearbeiten" : "Neue Aufgabe"}</DialogTitle>
+          <DialogTitle className="text-base">{todo ? t('editTask') : t('newTask')}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-3">
-          {/* Beschreibung */}
           <div className="space-y-1">
-            <Label htmlFor="description" className="text-xs">Beschreibung</Label>
+            <Label htmlFor="description" className="text-xs">{t('description')}</Label>
             <Input
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="h-8 text-sm"
-              placeholder="Was ist zu tun?"
+              placeholder={t('descriptionPlaceholder')}
             />
           </div>
 
-          {/* Kategorie + Dauer in einer Zeile */}
           <div className="grid grid-cols-2 gap-2">
             <div className="space-y-1" ref={categoryRef}>
-              <Label htmlFor="category" className="text-xs">Kategorie</Label>
+              <Label htmlFor="category" className="text-xs">{t('category')}</Label>
               <div className="relative">
                 <Input
                   id="category"
@@ -121,7 +122,7 @@ export function EditTodoDialog({
                   }}
                   onFocus={() => setShowCategoryDropdown(true)}
                   className="h-8 text-sm pr-7"
-                  placeholder="z.B. Arbeit"
+                  placeholder={t('categoryPlaceholder')}
                   autoComplete="off"
                 />
                 {existingCategories.length > 0 && (
@@ -153,7 +154,7 @@ export function EditTodoDialog({
               </div>
             </div>
             <div className="space-y-1">
-              <Label htmlFor="duration" className="text-xs">Dauer (min)</Label>
+              <Label htmlFor="duration" className="text-xs">{t('duration')}</Label>
               <Input
                 id="duration"
                 type="number"
@@ -164,9 +165,8 @@ export function EditTodoDialog({
             </div>
           </div>
 
-          {/* Datum */}
           <div className="space-y-1">
-            <Label htmlFor="date" className="text-xs">Datum</Label>
+            <Label htmlFor="date" className="text-xs">{t('date')}</Label>
             <input
               id="date"
               type="date"
@@ -176,7 +176,6 @@ export function EditTodoDialog({
             />
           </div>
 
-          {/* Checkboxen */}
           <div className="flex flex-wrap gap-x-4 gap-y-2 pt-1">
             <label className="flex items-center gap-1.5 cursor-pointer">
               <Checkbox
@@ -185,7 +184,7 @@ export function EditTodoDialog({
                 onCheckedChange={(checked) => setActive(checked as boolean)}
                 className="h-4 w-4"
               />
-              <span className="text-xs">Aktiv</span>
+              <span className="text-xs">{t('active')}</span>
             </label>
             <label className="flex items-center gap-1.5 cursor-pointer">
               <Checkbox
@@ -194,14 +193,13 @@ export function EditTodoDialog({
                 onCheckedChange={(checked) => setIsFixedTime(checked as boolean)}
                 className="h-4 w-4"
               />
-              <span className="text-xs">Feste Uhrzeit</span>
+              <span className="text-xs">{t('fixedTime')}</span>
             </label>
           </div>
 
-          {/* Uhrzeit (nur wenn feste Uhrzeit aktiviert) */}
           {isFixedTime && (
             <div className="space-y-1">
-              <Label htmlFor="fixed-time-input" className="text-xs">Uhrzeit</Label>
+              <Label htmlFor="fixed-time-input" className="text-xs">{t('time')}</Label>
               <Input
                 id="fixed-time-input"
                 type="time"
@@ -214,7 +212,7 @@ export function EditTodoDialog({
         </div>
 
         <DialogFooter className="pt-2">
-          <Button size="sm" onClick={handleSubmit}>Speichern</Button>
+          <Button size="sm" onClick={handleSubmit}>{tCommon('save')}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
