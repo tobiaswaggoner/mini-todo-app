@@ -2,7 +2,7 @@
 
 import type React from "react"
 import type { Todo, CategoryColorMapping, WeekdayDefault } from "@/lib/types"
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { format } from "date-fns"
 import { de } from "date-fns/locale"
 import {
@@ -18,7 +18,7 @@ import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSo
 import { SortableTodoItem } from "./sortable-todo-item"
 import { CompactDailyPlanner } from "./compact-daily-planner"
 import { Button } from "@/components/ui/button"
-import { PlusCircle, Upload, Download, Settings } from "lucide-react"
+import { PlusCircle, Upload, Download, Settings, MoreVertical } from "lucide-react"
 import { EditTodoDialog } from "./edit-todo-dialog"
 import { SettingsDialog } from "./settings-dialog"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
@@ -57,7 +57,19 @@ export function BacklogView({
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const importInputRef = useRef<HTMLInputElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   // Format the selected date for display
   const formattedDate = format(new Date(selectedDate), "EEEE, d. MMMM", { locale: de })
@@ -173,24 +185,44 @@ export function BacklogView({
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="capitalize">{formattedDate}</CardTitle>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-between">
               <input type="file" ref={importInputRef} onChange={handleImport} className="hidden" accept=".json" />
-              <Button size="sm" variant="outline" onClick={() => importInputRef.current?.click()}>
-                <Upload className="mr-2 h-4 w-4" />
-                Import
-              </Button>
-              <Button size="sm" variant="outline" onClick={handleExport}>
-                <Download className="mr-2 h-4 w-4" />
-                Export
-              </Button>
-              <Button size="sm" variant="outline" onClick={() => setIsSettingsOpen(true)}>
-                <Settings className="mr-2 h-4 w-4" />
-                Einstellungen
-              </Button>
+
               <Button size="sm" onClick={openNewTodoDialog}>
                 <PlusCircle className="mr-2 h-4 w-4" />
-                Neue Aufgabe
+                Neu
               </Button>
+
+              <div className="relative" ref={menuRef}>
+                <Button size="sm" variant="outline" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+                {isMenuOpen && (
+                  <div className="absolute right-0 top-full mt-1 z-50 bg-background border rounded-md shadow-lg py-1 min-w-[140px]">
+                    <button
+                      onClick={() => { importInputRef.current?.click(); setIsMenuOpen(false) }}
+                      className="w-full px-3 py-2 text-sm text-left flex items-center gap-2 hover:bg-accent"
+                    >
+                      <Upload className="h-4 w-4" />
+                      Import
+                    </button>
+                    <button
+                      onClick={() => { handleExport(); setIsMenuOpen(false) }}
+                      className="w-full px-3 py-2 text-sm text-left flex items-center gap-2 hover:bg-accent"
+                    >
+                      <Download className="h-4 w-4" />
+                      Export
+                    </button>
+                    <button
+                      onClick={() => { setIsSettingsOpen(true); setIsMenuOpen(false) }}
+                      className="w-full px-3 py-2 text-sm text-left flex items-center gap-2 hover:bg-accent"
+                    >
+                      <Settings className="h-4 w-4" />
+                      Einstellungen
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </CardHeader>
           <CardContent className="pt-0">

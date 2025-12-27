@@ -293,7 +293,7 @@ export function DailyPlannerView({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="relative bg-gray-100 dark:bg-gray-800 rounded-lg p-4 h-[calc(100vh-370px)] overflow-y-auto">
+        <div className="relative bg-gray-100 dark:bg-gray-800 rounded-lg p-4 h-[calc(100dvh-370px)] overflow-y-auto">
           {/* Zeitmarker im Hintergrund */}
           {hourMarkers.map((hour, index) => (
             <div
