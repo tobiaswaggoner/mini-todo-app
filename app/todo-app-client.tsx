@@ -10,6 +10,8 @@ import { useDaySettings } from "@/hooks/use-day-settings"
 import { useWeekdayDefaults } from "@/hooks/use-weekday-defaults"
 import { useAuth } from "@/components/auth-provider"
 import { LoginPage } from "@/components/login-page"
+import { UserMenu } from "@/components/user-menu"
+import { ThemeToggle } from "@/components/theme-toggle"
 import type { Todo } from "@/lib/types"
 import { BacklogView } from "@/components/backlog-view"
 import { DailyPlannerView } from "@/components/daily-planner-view"
@@ -71,13 +73,22 @@ export function TodoAppClient() {
 
   // Show login if not authenticated
   if (!authLoading && !user) {
-    return <LoginPage />
+    return (
+      <div className="flex-1 flex flex-col">
+        <div className="flex justify-end p-4">
+          <ThemeToggle />
+        </div>
+        <div className="flex-1 flex items-center justify-center">
+          <LoginPage />
+        </div>
+      </div>
+    )
   }
 
   // Show loading state only for initial load
   if (!hasInitiallyLoaded.current && isInitialLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
+      <div className="flex-1 flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
       </div>
     )
@@ -88,7 +99,11 @@ export function TodoAppClient() {
   }
 
   return (
-    <div>
+    <div className="container mx-auto p-4 sm:p-6 lg:p-8 flex-1 overflow-hidden">
+      <header className="flex justify-end mb-4 gap-2">
+        <UserMenu />
+        <ThemeToggle />
+      </header>
       {/* View Switcher with Date Navigation */}
       <div className="flex justify-center items-center gap-3 mb-4">
         <div className="bg-gray-200 dark:bg-gray-800 p-1 rounded-lg flex gap-1">
