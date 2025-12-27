@@ -33,7 +33,7 @@ export function CompactDailyPlanner({
   availableHours: number
   categoryColorMappings: CategoryColorMapping[]
 }) {
-  const { schedule, dayStart, dayEnd, totalDuration } = useMemo(() => {
+  const { schedule, dayStart, totalDuration } = useMemo(() => {
     const dayStart = parse(startTime, "HH:mm", new Date())
     const dayEnd = addMinutes(dayStart, availableHours * 60)
     const totalDuration = availableHours * 60
@@ -167,8 +167,8 @@ export function CompactDailyPlanner({
 
     schedule.sort((a, b) => a.startTime.getTime() - b.startTime.getTime())
 
-    return { schedule, dayStart, dayEnd, totalDuration }
-  }, [todos, startTime, availableHours, categoryColorMappings])
+    return { schedule, dayStart, totalDuration }
+  }, [todos, startTime, availableHours])
 
   const formatDuration = (minutes: number): string => {
     if (minutes < 60) {

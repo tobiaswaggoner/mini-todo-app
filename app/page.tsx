@@ -11,7 +11,7 @@ export default function Home() {
           <div className="absolute top-0 right-0">
             <ThemeToggle />
           </div>
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Mini Todo Planner</h1>
+          <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Mini Todo Planner v0.1</h1>
           <p className="mt-2 text-lg text-gray-600 dark:text-gray-400">
             Organisieren Sie Ihren Tag, Aufgabe für Aufgabe.
           </p>

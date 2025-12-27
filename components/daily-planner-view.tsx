@@ -71,7 +71,7 @@ export function DailyPlannerView({
     return () => clearInterval(timer)
   }, [])
 
-  const { schedule, totalDuration, dayStart, dayEnd, hourMarkers, categoryStats } = useMemo(() => {
+  const { schedule, totalDuration, dayStart, hourMarkers, categoryStats } = useMemo(() => {
     const dayStart = parse(startTime, "HH:mm", new Date())
     const dayEnd = addMinutes(dayStart, availableHours * 60)
     const totalDuration = availableHours * 60
