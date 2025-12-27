@@ -11,15 +11,16 @@ Ein einfacher Tagesplaner für die Planung und Organisation von Aufgaben.
 - **Drag & Drop**: Ordne Aufgaben per Drag & Drop neu an
 - **Import/Export**: Sichere und lade deine Aufgaben als JSON-Datei
 - **Dark Mode**: Wechsle zwischen hellem und dunklem Design
+- **Cloud-Sync**: Daten werden sicher in der Cloud gespeichert
+- **Multi-Device**: Greife von überall auf deine Aufgaben zu
 
 ## Verwendung
 
-1. Erstelle Aufgaben mit Beschreibung, Kategorie und Dauer
-2. Aktiviere Aufgaben, die du heute erledigen möchtest
-3. Wechsle zur Tagesplaner-Ansicht für die Zeitplanung
-4. Passe Startzeit und verfügbare Stunden in den Einstellungen an
-
-Alle Daten werden lokal im Browser gespeichert.
+1. Melde dich mit Google oder GitHub an
+2. Erstelle Aufgaben mit Beschreibung, Kategorie und Dauer
+3. Aktiviere Aufgaben, die du heute erledigen möchtest
+4. Wechsle zur Tagesplaner-Ansicht für die Zeitplanung
+5. Passe Startzeit und verfügbare Stunden in den Einstellungen an
 
 ## Lizenz
 

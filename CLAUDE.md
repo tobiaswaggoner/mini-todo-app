@@ -48,19 +48,25 @@ npx supabase stop                       # Stop local instance
 ## Architecture
 
 ### State Management
-All data persists in browser localStorage via the `useLocalStorage<T>` hook. No backend/database.
+Data persists in Supabase with Row Level Security (RLS). Each user sees only their own data.
 
-**localStorage keys:**
-- `mini-todos-backlog` - Todo items array
-- `mini-todos-view` - Current view ("backlog" | "planner")
-- `mini-todos-startTime` - Day start time (HH:mm)
-- `mini-todos-availableHours` - Available planning hours
-- `mini-todos-categoryColors` - Category-to-color mappings
+**Tables (schema `mini_todo`):**
+- `todos` - Task items with sort_order
+- `user_settings` - View preference, start time, available hours
+- `category_colors` - Category-to-color mappings
+
+**Hooks:**
+- `useTodos()` - CRUD for todos
+- `useSettings()` - User preferences
+- `useCategoryColors()` - Color mappings
+
+### Authentication
+OAuth via Supabase Auth (Google + GitHub). AuthProvider wraps the app in `layout.tsx`.
 
 ### Component Hierarchy
 ```
-app/layout.tsx (ThemeProvider wrapper)
-  └── app/page.tsx
+app/layout.tsx (ThemeProvider + AuthProvider)
+  └── app/page.tsx (UserMenu + ThemeToggle)
       └── app/todo-app-client.tsx (main state holder, view switching)
           ├── components/backlog-view.tsx (task list with drag-drop)
           │   ├── components/sortable-todo-item.tsx
@@ -89,6 +95,7 @@ interface Todo {
 10-color palette with light/dark variants. Categories get consistent colors via hash-based assignment, overridable in settings.
 
 ## Key Libraries
+- **@supabase/ssr** - Supabase client for Next.js
 - **dnd-kit** - Drag-and-drop reordering
 - **Shadcn UI** - Component library (new-york style)
 - **next-themes** - Theme switching with hydration handling
