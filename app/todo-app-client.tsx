@@ -1,24 +1,48 @@
 "use client"
 
-import { useLocalStorage } from "@/hooks/use-local-storage"
+import { useTodos } from "@/hooks/use-todos"
+import { useSettings } from "@/hooks/use-settings"
+import { useCategoryColors } from "@/hooks/use-category-colors"
+import { useAuth } from "@/components/auth-provider"
+import { LoginPage } from "@/components/login-page"
 import type { Todo } from "@/lib/types"
-import type { CategoryColorMapping } from "@/lib/colors"
 import { BacklogView } from "@/components/backlog-view"
 import { DailyPlannerView } from "@/components/daily-planner-view"
 import { Button } from "@/components/ui/button"
-import { List, LayoutGrid } from "lucide-react"
-
-type View = "backlog" | "planner"
+import { List, LayoutGrid, Loader2 } from "lucide-react"
 
 export function TodoAppClient() {
-  const [todos, setTodos] = useLocalStorage<Todo[]>("mini-todos-backlog", [])
-  const [view, setView] = useLocalStorage<View>("mini-todos-view", "backlog")
-  const [startTime, setStartTime] = useLocalStorage<string>("mini-todos-startTime", "09:00")
-  const [availableHours, setAvailableHours] = useLocalStorage<number>("mini-todos-availableHours", 8)
-  const [categoryColorMappings, setCategoryColorMappings] = useLocalStorage<CategoryColorMapping[]>(
-    "mini-todos-categoryColors",
-    [],
-  )
+  const { user, loading: authLoading } = useAuth()
+  const { todos, setTodos, loading: todosLoading } = useTodos()
+  const {
+    view,
+    setView,
+    startTime,
+    setStartTime,
+    availableHours,
+    setAvailableHours,
+    loading: settingsLoading,
+  } = useSettings()
+  const {
+    categoryColorMappings,
+    setCategoryColorMappings,
+    loading: colorsLoading,
+  } = useCategoryColors()
+
+  // Show login if not authenticated
+  if (!authLoading && !user) {
+    return <LoginPage />
+  }
+
+  // Show loading state
+  const isLoading = authLoading || todosLoading || settingsLoading || colorsLoading
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+      </div>
+    )
+  }
 
   const handleTodosChange = (updatedTodos: Todo[]) => {
     setTodos(updatedTodos)

@@ -1,5 +1,6 @@
 import { TodoAppClient } from "./todo-app-client"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { UserMenu } from "@/components/user-menu"
 
 export default function Home() {
   // Wir laden keine initialen Daten mehr vom Server.
@@ -8,7 +9,8 @@ export default function Home() {
     <main className="bg-gray-50 dark:bg-gray-900 min-h-screen">
       <div className="container mx-auto p-4 sm:p-6 lg:p-8">
         <header className="text-center mb-8 relative">
-          <div className="absolute top-0 right-0">
+          <div className="absolute top-0 right-0 flex items-center gap-2">
+            <UserMenu />
             <ThemeToggle />
           </div>
           <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Mini Todo Planner v0.1</h1>
