@@ -17,6 +17,20 @@ pnpm start    # Start production server
 
 Note: Build ignores TypeScript and ESLint errors (configured in next.config.mjs).
 
+## Deployment (Vercel)
+
+Project is linked to Vercel. Use the Vercel CLI for deployment management:
+
+```bash
+vercel ls                 # List recent deployments with status
+vercel logs <url>         # View build/runtime logs
+vercel inspect <url>      # Deployment details
+vercel --prod             # Deploy to production
+vercel env pull           # Pull environment variables to .env.local
+```
+
+Deployments trigger automatically on push to main.
+
 ## Architecture
 
 ### State Management
