@@ -1,3 +1,4 @@
+Initialising login role...
 export type Json =
   | string
   | number
@@ -12,101 +13,34 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.1"
   }
-  mini_todo: {
+  graphql_public: {
     Tables: {
-      category_colors: {
-        Row: {
-          category: string
-          color_index: number
-          created_at: string
-          id: string
-          user_id: string
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
         }
-        Insert: {
-          category: string
-          color_index?: number
-          created_at?: string
-          id?: string
-          user_id: string
-        }
-        Update: {
-          category?: string
-          color_index?: number
-          created_at?: string
-          id?: string
-          user_id?: string
-        }
-        Relationships: []
+        Returns: Json
       }
-      todos: {
-        Row: {
-          active: boolean
-          category: string
-          created_at: string
-          description: string
-          duration: number
-          fixed_time: string | null
-          id: string
-          sort_order: number
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          active?: boolean
-          category?: string
-          created_at?: string
-          description: string
-          duration?: number
-          fixed_time?: string | null
-          id?: string
-          sort_order?: number
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          active?: boolean
-          category?: string
-          created_at?: string
-          description?: string
-          duration?: number
-          fixed_time?: string | null
-          id?: string
-          sort_order?: number
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      user_settings: {
-        Row: {
-          available_hours: number
-          created_at: string
-          id: string
-          start_time: string
-          updated_at: string
-          user_id: string
-          view: string
-        }
-        Insert: {
-          available_hours?: number
-          created_at?: string
-          id?: string
-          start_time?: string
-          updated_at?: string
-          user_id: string
-          view?: string
-        }
-        Update: {
-          available_hours?: number
-          created_at?: string
-          id?: string
-          start_time?: string
-          updated_at?: string
-          user_id?: string
-          view?: string
-        }
-        Relationships: []
-      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
+  public: {
+    Tables: {
+      [_ in never]: never
     }
     Views: {
       [_ in never]: never
@@ -241,7 +175,10 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  mini_todo: {
+  graphql_public: {
+    Enums: {},
+  },
+  public: {
     Enums: {},
   },
 } as const

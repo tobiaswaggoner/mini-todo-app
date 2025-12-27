@@ -12,6 +12,8 @@ import { useAuth } from "@/components/auth-provider"
 import { LoginPage } from "@/components/login-page"
 import { UserMenu } from "@/components/user-menu"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { SupporterBadge } from "@/components/supporter-badge"
+import { UpgradeButton } from "@/components/upgrade-button"
 import type { Todo } from "@/lib/types"
 import { BacklogView } from "@/components/backlog-view"
 import { DailyPlannerView } from "@/components/daily-planner-view"
@@ -100,7 +102,9 @@ export function TodoAppClient() {
 
   return (
     <div className="container mx-auto p-4 sm:p-6 lg:p-8 flex-1 overflow-hidden">
-      <header className="flex justify-end mb-4 gap-2">
+      <header className="flex justify-end items-center mb-4 gap-2">
+        <SupporterBadge />
+        <UpgradeButton />
         <UserMenu />
         <ThemeToggle />
       </header>
