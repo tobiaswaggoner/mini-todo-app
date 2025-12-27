@@ -87,8 +87,8 @@ export function TodoAppClient() {
 
   return (
     <div>
-      {/* View Switcher */}
-      <div className="flex justify-center mb-4">
+      {/* View Switcher with Date Navigation */}
+      <div className="flex justify-center items-center gap-3 mb-4">
         <div className="bg-gray-200 dark:bg-gray-800 p-1 rounded-lg flex gap-1">
           <Button
             variant={view === "backlog" ? "default" : "ghost"}
@@ -107,13 +107,12 @@ export function TodoAppClient() {
             Tagesplan
           </Button>
         </div>
-      </div>
 
-      {/* Date Navigation */}
-      <DateNavigation
-        selectedDate={selectedDate}
-        onDateChange={setSelectedDate}
-      />
+        <DateNavigation
+          selectedDate={selectedDate}
+          onDateChange={setSelectedDate}
+        />
+      </div>
 
       {view === "backlog" ? (
         <BacklogView
