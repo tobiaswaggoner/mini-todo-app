@@ -75,10 +75,10 @@ export function TodoAppClient() {
   if (!authLoading && !user) {
     return (
       <div className="flex-1 flex flex-col">
-        <div className="container mx-auto flex justify-end p-4">
+        <div className="container mx-auto flex justify-end px-4 py-2">
           <ThemeToggle />
         </div>
-        <div className="flex-1 flex items-center justify-center">
+        <div className="flex justify-center px-4 pt-4 sm:pt-12">
           <LoginPage />
         </div>
       </div>
