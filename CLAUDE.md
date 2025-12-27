@@ -101,6 +101,42 @@ interface Todo {
 - **next-themes** - Theme switching with hydration handling
 - **date-fns** - Time calculations
 
+## Monetization (Lemon Squeezy)
+
+**Status: Wartet auf Store-Verifizierung durch Lemon Squeezy (Stand: 27.12.2024)**
+
+Integration ist vollständig implementiert, aber der Lemon Squeezy Store muss erst verifiziert werden bevor Checkouts funktionieren.
+
+### Was bereits erledigt ist:
+- ✅ Datenbank: `subscriptions` Tabelle (Migration 005)
+- ✅ Webhook: `app/api/webhooks/lemonsqueezy/route.ts`
+- ✅ Hook: `useSupporterStatus()` für Feature-Gating
+- ✅ UI: `SupporterBadge`, `UpgradeButton` im Header
+- ✅ Environment Variables in Vercel (Production)
+
+### Nach Verifizierung testen:
+1. Store-URL aufrufen: https://mini-todo-planner.lemonsqueezy.com
+2. In der App auf "Upgrade" klicken
+3. Test-Kreditkarte: `4242 4242 4242 4242` (beliebiges Datum/CVC)
+4. Nach Kauf sollte Badge erscheinen, Button verschwinden
+
+### Feature-Gating Pattern:
+```typescript
+import { useSupporterStatus } from '@/hooks/use-supporter-status'
+
+function MyFeature() {
+  const { isSupporter } = useSupporterStatus()
+  if (!isSupporter) return <UpgradePrompt feature="Dieses Feature" />
+  return <ActualFeature />
+}
+```
+
+### Relevante Dateien:
+- `docs/lemon-squeezy-tutorial.md` - Vollständiges Tutorial
+- `docs/monetarising.md` - Hintergrund-Recherche
+- `lib/lemonsqueezy.ts` - Checkout URL Helper
+- `hooks/use-supporter-status.ts` - Supporter-Check Hook
+
 ## Notes
 - All UI text is in German
 - Uses `"use client"` directives for client components
