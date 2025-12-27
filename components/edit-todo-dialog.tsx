@@ -8,23 +8,28 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 
+interface EditTodoDialogProps {
+  isOpen: boolean
+  setIsOpen: (isOpen: boolean) => void
+  onSave: (todo: Todo) => void
+  todo: Todo | null
+  selectedDate: string
+}
+
 export function EditTodoDialog({
   isOpen,
   setIsOpen,
   onSave,
   todo,
-}: {
-  isOpen: boolean
-  setIsOpen: (isOpen: boolean) => void
-  onSave: (todo: Todo) => void
-  todo: Todo | null
-}) {
+  selectedDate,
+}: EditTodoDialogProps) {
   const [description, setDescription] = useState("")
   const [category, setCategory] = useState("")
   const [duration, setDuration] = useState(30)
   const [isFixedTime, setIsFixedTime] = useState(false)
   const [fixedTime, setFixedTime] = useState("09:00")
   const [active, setActive] = useState(true)
+  const [date, setDate] = useState(selectedDate)
 
   useEffect(() => {
     if (todo) {
@@ -34,6 +39,7 @@ export function EditTodoDialog({
       setIsFixedTime(!!todo.fixedTime)
       setFixedTime(todo.fixedTime || "09:00")
       setActive(todo.active)
+      setDate(todo.date)
     } else {
       setDescription("")
       setCategory("")
@@ -41,8 +47,9 @@ export function EditTodoDialog({
       setIsFixedTime(false)
       setFixedTime("09:00")
       setActive(true)
+      setDate(selectedDate)
     }
-  }, [todo, isOpen])
+  }, [todo, isOpen, selectedDate])
 
   const handleSubmit = () => {
     if (!description.trim() || !category.trim() || duration <= 0) {
@@ -56,6 +63,7 @@ export function EditTodoDialog({
       duration,
       fixedTime: isFixedTime ? fixedTime : undefined,
       active,
+      date,
     })
     setIsOpen(false)
   }
@@ -99,6 +107,18 @@ export function EditTodoDialog({
               value={duration}
               onChange={(e) => setDuration(Number.parseInt(e.target.value, 10) || 0)}
               className="col-span-3"
+            />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="date" className="text-right">
+              Datum
+            </Label>
+            <input
+              id="date"
+              type="date"
+              value={date}
+              onChange={(e) => e.target.value && setDate(e.target.value)}
+              className="col-span-3 px-3 py-2 border rounded-md bg-background text-foreground text-sm font-sans"
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">

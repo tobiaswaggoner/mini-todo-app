@@ -1,5 +1,5 @@
 // Eine vordefinierte Palette von Farben für die Kategorien.
-const COLORS = [
+export const COLORS = [
   {
     bg: "bg-sky-200",
     border: "border-sky-500",

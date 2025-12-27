@@ -1,8 +1,10 @@
 "use client"
 
 import type React from "react"
-import type { Todo, CategoryColorMapping } from "@/lib/types"
+import type { Todo, CategoryColorMapping, WeekdayDefault } from "@/lib/types"
 import { useState, useRef } from "react"
+import { format } from "date-fns"
+import { de } from "date-fns/locale"
 import {
   DndContext,
   closestCenter,
@@ -16,26 +18,49 @@ import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSo
 import { SortableTodoItem } from "./sortable-todo-item"
 import { CompactDailyPlanner } from "./compact-daily-planner"
 import { Button } from "@/components/ui/button"
-import { PlusCircle, Upload, Download } from "lucide-react"
+import { PlusCircle, Upload, Download, Settings } from "lucide-react"
 import { EditTodoDialog } from "./edit-todo-dialog"
+import { SettingsDialog } from "./settings-dialog"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+
+interface BacklogViewProps {
+  todos: Todo[]
+  onTodosChange: (todos: Todo[]) => void
+  selectedDate: string
+  startTime: string
+  availableHours: number
+  isOverridden: boolean
+  updateDaySettings: (updates: { startTime?: string; availableHours?: number }) => Promise<void>
+  resetToDefault: () => Promise<void>
+  weekdayDefaults: WeekdayDefault[]
+  updateWeekdayDefault: (weekday: number, updates: { startTime?: string; availableHours?: number }) => Promise<void>
+  categoryColorMappings: CategoryColorMapping[]
+  setCategoryColorMappings: (mappings: CategoryColorMapping[]) => Promise<void>
+  moveTodoToDate: (todoId: string, newDate: string) => Promise<void>
+}
 
 export function BacklogView({
   todos,
   onTodosChange,
+  selectedDate,
   startTime,
   availableHours,
+  isOverridden,
+  updateDaySettings,
+  resetToDefault,
+  weekdayDefaults,
+  updateWeekdayDefault,
   categoryColorMappings,
-}: {
-  todos: Todo[]
-  onTodosChange: (todos: Todo[]) => void
-  startTime: string
-  availableHours: number
-  categoryColorMappings: CategoryColorMapping[]
-}) {
+  setCategoryColorMappings,
+  moveTodoToDate,
+}: BacklogViewProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null)
   const importInputRef = useRef<HTMLInputElement>(null)
+
+  // Format the selected date for display
+  const formattedDate = format(new Date(selectedDate), "EEEE, d. MMMM", { locale: de })
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -55,13 +80,22 @@ export function BacklogView({
   }
 
   const handleSaveTodo = (todo: Todo) => {
-    let newTodos
-    if (editingTodo) {
-      newTodos = todos.map((t) => (t.id === todo.id ? todo : t))
+    // If the todo's date changed and it's not a new todo, move it to the new date
+    if (editingTodo && editingTodo.date !== todo.date) {
+      // Remove from current list and move to new date
+      const newTodos = todos.filter((t) => t.id !== todo.id)
+      onTodosChange(newTodos)
+      moveTodoToDate(todo.id, todo.date)
+    } else if (editingTodo) {
+      // Update existing todo (same date)
+      const newTodos = todos.map((t) => (t.id === todo.id ? todo : t))
+      onTodosChange(newTodos)
     } else {
-      newTodos = [...todos, todo]
+      // New todo - ensure it has the selected date
+      const todoWithDate = { ...todo, date: todo.date || selectedDate }
+      const newTodos = [...todos, todoWithDate]
+      onTodosChange(newTodos)
     }
-    onTodosChange(newTodos)
     setEditingTodo(null)
   }
 
@@ -138,7 +172,7 @@ export function BacklogView({
       <div className="lg:col-span-2">
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle>Aufgaben-Backlog</CardTitle>
+            <CardTitle className="capitalize">{formattedDate}</CardTitle>
             <div className="flex items-center gap-2">
               <input type="file" ref={importInputRef} onChange={handleImport} className="hidden" accept=".json" />
               <Button size="sm" variant="outline" onClick={() => importInputRef.current?.click()}>
@@ -148,6 +182,10 @@ export function BacklogView({
               <Button size="sm" variant="outline" onClick={handleExport}>
                 <Download className="mr-2 h-4 w-4" />
                 Export
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => setIsSettingsOpen(true)}>
+                <Settings className="mr-2 h-4 w-4" />
+                Einstellungen
               </Button>
               <Button size="sm" onClick={openNewTodoDialog}>
                 <PlusCircle className="mr-2 h-4 w-4" />
@@ -185,14 +223,36 @@ export function BacklogView({
       {/* Tagesvorschau - nimmt 1/3 der Breite ein */}
       <div className="lg:col-span-1">
         <CompactDailyPlanner
-          todos={todos}
+          selectedDate={selectedDate}
           startTime={startTime}
           availableHours={availableHours}
+          todos={todos}
           categoryColorMappings={categoryColorMappings}
         />
       </div>
 
-      <EditTodoDialog isOpen={isDialogOpen} setIsOpen={setIsDialogOpen} onSave={handleSaveTodo} todo={editingTodo} />
+      <EditTodoDialog
+        isOpen={isDialogOpen}
+        setIsOpen={setIsDialogOpen}
+        onSave={handleSaveTodo}
+        todo={editingTodo}
+        selectedDate={selectedDate}
+      />
+
+      <SettingsDialog
+        isOpen={isSettingsOpen}
+        setIsOpen={setIsSettingsOpen}
+        selectedDate={selectedDate}
+        startTime={startTime}
+        availableHours={availableHours}
+        isOverridden={isOverridden}
+        updateDaySettings={updateDaySettings}
+        resetToDefault={resetToDefault}
+        weekdayDefaults={weekdayDefaults}
+        updateWeekdayDefault={updateWeekdayDefault}
+        categoryColorMappings={categoryColorMappings}
+        setCategoryColorMappings={setCategoryColorMappings}
+      />
     </div>
   )
 }

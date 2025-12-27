@@ -1,9 +1,10 @@
 "use client"
 
 import { useMemo } from "react"
+import { format as formatDate, addMinutes, parse } from "date-fns"
+import { de } from "date-fns/locale"
 import type { Todo, CategoryColorMapping } from "@/lib/types"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { addMinutes, format, parse } from "date-fns"
 import { getCategoryColor } from "@/lib/colors"
 import { cn } from "@/lib/utils"
 
@@ -22,17 +23,24 @@ interface TimeSlot {
   duration: number
 }
 
-export function CompactDailyPlanner({
-  todos,
-  startTime,
-  availableHours,
-  categoryColorMappings,
-}: {
-  todos: Todo[]
+interface CompactDailyPlannerProps {
+  selectedDate: string
   startTime: string
   availableHours: number
+  todos: Todo[]
   categoryColorMappings: CategoryColorMapping[]
-}) {
+}
+
+export function CompactDailyPlanner({
+  selectedDate,
+  startTime,
+  availableHours,
+  todos,
+  categoryColorMappings,
+}: CompactDailyPlannerProps) {
+  // Format the date for the title
+  const formattedDate = formatDate(new Date(selectedDate), "EEEE, d. MMM", { locale: de })
+  const isToday = formatDate(new Date(), "yyyy-MM-dd") === selectedDate
   const { schedule, dayStart, totalDuration } = useMemo(() => {
     const dayStart = parse(startTime, "HH:mm", new Date())
     const dayEnd = addMinutes(dayStart, availableHours * 60)
@@ -190,7 +198,9 @@ export function CompactDailyPlanner({
   return (
     <Card className="h-full">
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg">Tagesvorschau</CardTitle>
+        <CardTitle className="text-lg capitalize">
+          {isToday ? "Heute" : formattedDate}
+        </CardTitle>
       </CardHeader>
       <CardContent className="p-2">
         <div className="relative bg-gray-100 dark:bg-gray-800 rounded-lg p-2 h-[60vh] overflow-y-auto">
@@ -219,11 +229,11 @@ export function CompactDailyPlanner({
                     // Alle Aufgaben verwenden jetzt ihre Kategoriefarbe für den Text
                     `${color.text} ${color.darkText}`,
                   )}
-                  title={`${task.todo.description} (${format(task.startTime, "HH:mm")} - ${format(task.endTime, "HH:mm")}, ${formatDuration(actualDuration)})`}
+                  title={`${task.todo.description} (${formatDate(task.startTime, "HH:mm")} - ${formatDate(task.endTime, "HH:mm")}, ${formatDuration(actualDuration)})`}
                 >
                   {task.todo.description}{" "}
                   <span className={cn("font-normal opacity-80", `${color.text} ${color.darkText}`)}>
-                    ({format(task.startTime, "HH:mm")} - {format(task.endTime, "HH:mm")},{" "}
+                    ({formatDate(task.startTime, "HH:mm")} - {formatDate(task.endTime, "HH:mm")},{" "}
                     {formatDuration(actualDuration)})
                     {task.isFixed && (
                       <span className={cn("ml-1 font-bold", `${color.text} ${color.darkText}`)}>[FEST]</span>
