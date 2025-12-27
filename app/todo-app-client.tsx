@@ -75,7 +75,7 @@ export function TodoAppClient() {
   if (!authLoading && !user) {
     return (
       <div className="flex-1 flex flex-col">
-        <div className="flex justify-end p-4">
+        <div className="container mx-auto flex justify-end p-4">
           <ThemeToggle />
         </div>
         <div className="flex-1 flex items-center justify-center">
