@@ -4,12 +4,20 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { User, Session } from '@supabase/supabase-js'
 
+interface AuthResult {
+  error?: string
+}
+
 interface AuthContextType {
   user: User | null
   session: Session | null
   loading: boolean
   signInWithGoogle: () => Promise<void>
   signInWithGitHub: () => Promise<void>
+  signUp: (email: string, password: string) => Promise<AuthResult>
+  signInWithPassword: (email: string, password: string) => Promise<AuthResult>
+  resetPasswordForEmail: (email: string) => Promise<AuthResult>
+  updatePassword: (newPassword: string) => Promise<AuthResult>
   signOut: () => Promise<void>
 }
 
@@ -59,6 +67,51 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })
   }
 
+  const signUp = async (email: string, password: string): Promise<AuthResult> => {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
+    })
+    if (error) {
+      return { error: error.message }
+    }
+    return {}
+  }
+
+  const signInWithPassword = async (email: string, password: string): Promise<AuthResult> => {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+    if (error) {
+      return { error: error.message }
+    }
+    return {}
+  }
+
+  const resetPasswordForEmail = async (email: string): Promise<AuthResult> => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/callback?type=recovery`,
+    })
+    if (error) {
+      return { error: error.message }
+    }
+    return {}
+  }
+
+  const updatePassword = async (newPassword: string): Promise<AuthResult> => {
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword,
+    })
+    if (error) {
+      return { error: error.message }
+    }
+    return {}
+  }
+
   const signOut = async () => {
     await supabase.auth.signOut()
   }
@@ -70,6 +123,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       loading,
       signInWithGoogle,
       signInWithGitHub,
+      signUp,
+      signInWithPassword,
+      resetPasswordForEmail,
+      updatePassword,
       signOut,
     }}>
       {children}

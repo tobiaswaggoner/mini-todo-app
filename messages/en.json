@@ -1,0 +1,133 @@
+{
+  "common": {
+    "save": "Save",
+    "add": "Add",
+    "reset": "Reset",
+    "today": "Today",
+    "new": "New",
+    "import": "Import",
+    "export": "Export",
+    "settings": "Settings",
+    "total": "Total",
+    "fixed": "FIXED"
+  },
+  "auth": {
+    "loginDescription": "Sign in to manage your tasks",
+    "signInWithGoogle": "Sign in with Google",
+    "signInWithGitHub": "Sign in with GitHub",
+    "signOut": "Sign out",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "forgotPassword": "Forgot password?",
+    "resetPassword": "Reset password",
+    "noAccount": "Don't have an account?",
+    "createAccount": "Create account",
+    "haveAccount": "Already have an account?",
+    "backToLogin": "Back to login",
+    "checkEmailTitle": "Check your email",
+    "checkEmailConfirmation": "We've sent you a confirmation email. Please click the link in the email to activate your account.",
+    "checkEmailReset": "We've sent you a password reset email. Please click the link in the email.",
+    "resetPasswordTitle": "Set new password",
+    "newPassword": "New password",
+    "setNewPassword": "Save password",
+    "orContinueWith": "or continue with",
+    "passwordMismatch": "Passwords do not match.",
+    "passwordTooShort": "Password must be at least 6 characters.",
+    "invalidCredentials": "Invalid credentials.",
+    "emailInUse": "This email address is already in use.",
+    "invalidEmail": "Please enter a valid email address.",
+    "genericError": "An error occurred. Please try again.",
+    "deleteAccount": "Delete account",
+    "deleteAccountTitle": "Delete account?",
+    "deleteAccountConfirm": "Are you sure? All your data will be permanently deleted. This action cannot be undone.",
+    "deleteAccountButton": "Delete permanently",
+    "cancel": "Cancel"
+  },
+  "navigation": {
+    "planning": "Planning",
+    "dailyPlan": "Daily Plan"
+  },
+  "backlog": {
+    "noTasks": "No tasks in backlog. Import a list or add a new task.",
+    "exportError": "No tasks to export.",
+    "importFormatError": "Error: The imported file has an invalid format.",
+    "importReadError": "The file could not be read. Make sure it is a valid JSON file."
+  },
+  "dailyPlanner": {
+    "noActiveTasks": "No active tasks for this day.",
+    "switchToPlanning": "Switch to planning view to add tasks.",
+    "noActiveTasksShort": "No active tasks"
+  },
+  "editTodo": {
+    "newTask": "New Task",
+    "editTask": "Edit Task",
+    "description": "Description",
+    "descriptionPlaceholder": "What needs to be done?",
+    "category": "Category",
+    "categoryPlaceholder": "e.g. Work",
+    "duration": "Duration (min)",
+    "date": "Date",
+    "active": "Active",
+    "fixedTime": "Fixed Time",
+    "time": "Time",
+    "validationError": "Please fill in all fields correctly."
+  },
+  "settings": {
+    "title": "Settings",
+    "individualDay": "Individual Day",
+    "weekdayDefaults": "Weekday Defaults",
+    "categoryColors": "Category Colors",
+    "language": "Language",
+    "startTime": "Start Time",
+    "hours": "Hours",
+    "customSettingsActive": "Custom settings active.",
+    "overridesDefault": "Overrides the weekday default.",
+    "usesDefault": "Uses {weekday} default.",
+    "defaultValuesForWeekdays": "Default values for each weekday.",
+    "day": "Day",
+    "start": "Start",
+    "hrs": "Hrs",
+    "categoryColorsDescription": "Here you can customize the colors for your categories.",
+    "newCategoryPlaceholder": "New category...",
+    "noCategoriesYet": "No categories yet.",
+    "categoryExists": "This category already exists.",
+    "selectLanguage": "Select language"
+  },
+  "weekdays": {
+    "0": "Sunday",
+    "1": "Monday",
+    "2": "Tuesday",
+    "3": "Wednesday",
+    "4": "Thursday",
+    "5": "Friday",
+    "6": "Saturday"
+  },
+  "colors": {
+    "red": "Red",
+    "orange": "Orange",
+    "yellow": "Yellow",
+    "lime": "Lime",
+    "green": "Green",
+    "teal": "Teal",
+    "sky": "Sky Blue",
+    "indigo": "Indigo",
+    "violet": "Violet",
+    "fuchsia": "Fuchsia",
+    "rose": "Rose",
+    "slate": "Gray"
+  },
+  "aria": {
+    "moveTask": "Move task",
+    "deactivateTask": "Deactivate task",
+    "activateTask": "Activate task",
+    "editTask": "Edit task",
+    "deleteTask": "Delete task"
+  },
+  "formats": {
+    "minSuffix": "min",
+    "hourSuffix": "h"
+  }
+}

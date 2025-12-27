@@ -1,14 +1,315 @@
 "use client"
 
+import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { useAuth } from './auth-provider'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Mail } from 'lucide-react'
+
+type AuthView = 'login' | 'register' | 'forgot' | 'check-email'
 
 export function LoginPage() {
   const t = useTranslations('auth')
-  const { signInWithGoogle, signInWithGitHub, loading } = useAuth()
+  const {
+    signInWithGoogle,
+    signInWithGitHub,
+    signUp,
+    signInWithPassword,
+    resetPasswordForEmail,
+    loading
+  } = useAuth()
 
+  const [view, setView] = useState<AuthView>('login')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [error, setError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [checkEmailType, setCheckEmailType] = useState<'confirmation' | 'reset'>('confirmation')
+
+  const validateEmail = (email: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  }
+
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+
+    if (!validateEmail(email)) {
+      setError(t('invalidEmail'))
+      return
+    }
+
+    setIsSubmitting(true)
+    const result = await signInWithPassword(email, password)
+    setIsSubmitting(false)
+
+    if (result.error) {
+      setError(t('invalidCredentials'))
+    }
+  }
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+
+    if (!validateEmail(email)) {
+      setError(t('invalidEmail'))
+      return
+    }
+
+    if (password.length < 6) {
+      setError(t('passwordTooShort'))
+      return
+    }
+
+    if (password !== confirmPassword) {
+      setError(t('passwordMismatch'))
+      return
+    }
+
+    setIsSubmitting(true)
+    const result = await signUp(email, password)
+    setIsSubmitting(false)
+
+    if (result.error) {
+      if (result.error.includes('already registered')) {
+        setError(t('emailInUse'))
+      } else {
+        setError(t('genericError'))
+      }
+    } else {
+      setCheckEmailType('confirmation')
+      setView('check-email')
+    }
+  }
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+
+    if (!validateEmail(email)) {
+      setError(t('invalidEmail'))
+      return
+    }
+
+    setIsSubmitting(true)
+    const result = await resetPasswordForEmail(email)
+    setIsSubmitting(false)
+
+    if (result.error) {
+      setError(t('genericError'))
+    } else {
+      setCheckEmailType('reset')
+      setView('check-email')
+    }
+  }
+
+  const resetForm = () => {
+    setEmail('')
+    setPassword('')
+    setConfirmPassword('')
+    setError('')
+  }
+
+  const switchView = (newView: AuthView) => {
+    resetForm()
+    setView(newView)
+  }
+
+  const isLoading = loading || isSubmitting
+
+  // Check Email View
+  if (view === 'check-email') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+              <Mail className="h-6 w-6 text-primary" />
+            </div>
+            <CardTitle className="text-2xl">{t('checkEmailTitle')}</CardTitle>
+            <CardDescription className="mt-2">
+              {checkEmailType === 'confirmation'
+                ? t('checkEmailConfirmation')
+                : t('checkEmailReset')}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => switchView('login')}
+            >
+              {t('backToLogin')}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  // Forgot Password View
+  if (view === 'forgot') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl">{t('resetPassword')}</CardTitle>
+            <CardDescription>
+              {t('loginDescription')}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleForgotPassword} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">{t('email')}</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="name@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={isLoading}
+                  required
+                />
+              </div>
+
+              {error && (
+                <p className="text-sm text-destructive">{error}</p>
+              )}
+
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {t('resetPassword')}
+              </Button>
+
+              <div className="text-center text-sm">
+                <button
+                  type="button"
+                  onClick={() => switchView('login')}
+                  className="text-primary hover:underline"
+                >
+                  {t('backToLogin')}
+                </button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  // Register View
+  if (view === 'register') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl">{t('createAccount')}</CardTitle>
+            <CardDescription>
+              {t('loginDescription')}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSignUp} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">{t('email')}</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="name@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={isLoading}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password">{t('password')}</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={isLoading}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">{t('confirmPassword')}</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  disabled={isLoading}
+                  required
+                />
+              </div>
+
+              {error && (
+                <p className="text-sm text-destructive">{error}</p>
+              )}
+
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {t('signUp')}
+              </Button>
+
+              <div className="relative my-4">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-card px-2 text-muted-foreground">
+                    {t('orContinueWith')}
+                  </span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <Button
+                  type="button"
+                  onClick={signInWithGoogle}
+                  disabled={isLoading}
+                  variant="outline"
+                >
+                  <GoogleIcon className="mr-2 h-4 w-4" />
+                  Google
+                </Button>
+                <Button
+                  type="button"
+                  onClick={signInWithGitHub}
+                  disabled={isLoading}
+                  variant="outline"
+                >
+                  <GitHubIcon className="mr-2 h-4 w-4" />
+                  GitHub
+                </Button>
+              </div>
+
+              <div className="text-center text-sm">
+                {t('haveAccount')}{' '}
+                <button
+                  type="button"
+                  onClick={() => switchView('login')}
+                  className="text-primary hover:underline"
+                >
+                  {t('signIn')}
+                </button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  // Login View (default)
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
       <Card className="w-full max-w-md">
@@ -18,25 +319,93 @@ export function LoginPage() {
             {t('loginDescription')}
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <Button
-            onClick={signInWithGoogle}
-            disabled={loading}
-            className="w-full"
-            variant="outline"
-          >
-            <GoogleIcon className="mr-2 h-4 w-4" />
-            {t('signInWithGoogle')}
-          </Button>
-          <Button
-            onClick={signInWithGitHub}
-            disabled={loading}
-            className="w-full"
-            variant="outline"
-          >
-            <GitHubIcon className="mr-2 h-4 w-4" />
-            {t('signInWithGitHub')}
-          </Button>
+        <CardContent>
+          <form onSubmit={handleSignIn} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">{t('email')}</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="name@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">{t('password')}</Label>
+                <button
+                  type="button"
+                  onClick={() => switchView('forgot')}
+                  className="text-sm text-primary hover:underline"
+                >
+                  {t('forgotPassword')}
+                </button>
+              </div>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
+                required
+              />
+            </div>
+
+            {error && (
+              <p className="text-sm text-destructive">{error}</p>
+            )}
+
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {t('signIn')}
+            </Button>
+
+            <div className="relative my-4">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-card px-2 text-muted-foreground">
+                  {t('orContinueWith')}
+                </span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <Button
+                type="button"
+                onClick={signInWithGoogle}
+                disabled={isLoading}
+                variant="outline"
+              >
+                <GoogleIcon className="mr-2 h-4 w-4" />
+                Google
+              </Button>
+              <Button
+                type="button"
+                onClick={signInWithGitHub}
+                disabled={isLoading}
+                variant="outline"
+              >
+                <GitHubIcon className="mr-2 h-4 w-4" />
+                GitHub
+              </Button>
+            </div>
+
+            <div className="text-center text-sm">
+              {t('noAccount')}{' '}
+              <button
+                type="button"
+                onClick={() => switchView('register')}
+                className="text-primary hover:underline"
+              >
+                {t('createAccount')}
+              </button>
+            </div>
+          </form>
         </CardContent>
       </Card>
     </div>

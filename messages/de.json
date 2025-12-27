@@ -1,0 +1,133 @@
+{
+  "common": {
+    "save": "Speichern",
+    "add": "Hinzufügen",
+    "reset": "Zurücksetzen",
+    "today": "Heute",
+    "new": "Neu",
+    "import": "Import",
+    "export": "Export",
+    "settings": "Einstellungen",
+    "total": "Gesamt",
+    "fixed": "FEST"
+  },
+  "auth": {
+    "loginDescription": "Melden Sie sich an, um Ihre Aufgaben zu verwalten",
+    "signInWithGoogle": "Mit Google anmelden",
+    "signInWithGitHub": "Mit GitHub anmelden",
+    "signOut": "Abmelden",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "signIn": "Anmelden",
+    "signUp": "Registrieren",
+    "forgotPassword": "Passwort vergessen?",
+    "resetPassword": "Passwort zurücksetzen",
+    "noAccount": "Noch kein Konto?",
+    "createAccount": "Konto erstellen",
+    "haveAccount": "Bereits ein Konto?",
+    "backToLogin": "Zurück zur Anmeldung",
+    "checkEmailTitle": "E-Mail prüfen",
+    "checkEmailConfirmation": "Wir haben Ihnen eine Bestätigungs-E-Mail gesendet. Bitte klicken Sie auf den Link in der E-Mail, um Ihr Konto zu aktivieren.",
+    "checkEmailReset": "Wir haben Ihnen eine E-Mail zum Zurücksetzen des Passworts gesendet. Bitte klicken Sie auf den Link in der E-Mail.",
+    "resetPasswordTitle": "Neues Passwort festlegen",
+    "newPassword": "Neues Passwort",
+    "setNewPassword": "Passwort speichern",
+    "orContinueWith": "oder weiter mit",
+    "passwordMismatch": "Die Passwörter stimmen nicht überein.",
+    "passwordTooShort": "Das Passwort muss mindestens 6 Zeichen lang sein.",
+    "invalidCredentials": "Ungültige Anmeldedaten.",
+    "emailInUse": "Diese E-Mail-Adresse wird bereits verwendet.",
+    "invalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+    "genericError": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+    "deleteAccount": "Account löschen",
+    "deleteAccountTitle": "Account löschen?",
+    "deleteAccountConfirm": "Sind Sie sicher? Alle Ihre Daten werden unwiderruflich gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.",
+    "deleteAccountButton": "Endgültig löschen",
+    "cancel": "Abbrechen"
+  },
+  "navigation": {
+    "planning": "Planung",
+    "dailyPlan": "Tagesplan"
+  },
+  "backlog": {
+    "noTasks": "Keine Aufgaben im Backlog. Importieren Sie eine Liste oder fügen Sie eine neue Aufgabe hinzu.",
+    "exportError": "Keine Aufgaben zum Exportieren vorhanden.",
+    "importFormatError": "Fehler: Die importierte Datei hat kein gültiges Format.",
+    "importReadError": "Die Datei konnte nicht gelesen werden. Stellen Sie sicher, dass es eine gültige JSON-Datei ist."
+  },
+  "dailyPlanner": {
+    "noActiveTasks": "Keine aktiven Aufgaben für diesen Tag.",
+    "switchToPlanning": "Wechseln Sie zur Planung-Ansicht um Aufgaben hinzuzufügen.",
+    "noActiveTasksShort": "Keine aktiven Aufgaben"
+  },
+  "editTodo": {
+    "newTask": "Neue Aufgabe",
+    "editTask": "Aufgabe bearbeiten",
+    "description": "Beschreibung",
+    "descriptionPlaceholder": "Was ist zu tun?",
+    "category": "Kategorie",
+    "categoryPlaceholder": "z.B. Arbeit",
+    "duration": "Dauer (min)",
+    "date": "Datum",
+    "active": "Aktiv",
+    "fixedTime": "Feste Uhrzeit",
+    "time": "Uhrzeit",
+    "validationError": "Bitte füllen Sie alle Felder korrekt aus."
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "individualDay": "Individueller Tag",
+    "weekdayDefaults": "Wochentag-Standards",
+    "categoryColors": "Kategoriefarben",
+    "language": "Sprache",
+    "startTime": "Startzeit",
+    "hours": "Stunden",
+    "customSettingsActive": "Individuelle Einstellungen aktiv.",
+    "overridesDefault": "Überschreibt den Wochentag-Standard.",
+    "usesDefault": "Nutzt {weekday}-Standard.",
+    "defaultValuesForWeekdays": "Standardwerte für jeden Wochentag.",
+    "day": "Tag",
+    "start": "Start",
+    "hrs": "Std.",
+    "categoryColorsDescription": "Hier können Sie die Farben für Ihre Kategorien anpassen.",
+    "newCategoryPlaceholder": "Neue Kategorie...",
+    "noCategoriesYet": "Noch keine Kategorien vorhanden.",
+    "categoryExists": "Diese Kategorie existiert bereits.",
+    "selectLanguage": "Sprache auswählen"
+  },
+  "weekdays": {
+    "0": "Sonntag",
+    "1": "Montag",
+    "2": "Dienstag",
+    "3": "Mittwoch",
+    "4": "Donnerstag",
+    "5": "Freitag",
+    "6": "Samstag"
+  },
+  "colors": {
+    "red": "Rot",
+    "orange": "Orange",
+    "yellow": "Gelb",
+    "lime": "Limette",
+    "green": "Grün",
+    "teal": "Türkis",
+    "sky": "Himmelblau",
+    "indigo": "Indigo",
+    "violet": "Violett",
+    "fuchsia": "Fuchsia",
+    "rose": "Rose",
+    "slate": "Grau"
+  },
+  "aria": {
+    "moveTask": "Aufgabe verschieben",
+    "deactivateTask": "Aufgabe deaktivieren",
+    "activateTask": "Aufgabe aktivieren",
+    "editTask": "Aufgabe bearbeiten",
+    "deleteTask": "Aufgabe löschen"
+  },
+  "formats": {
+    "minSuffix": "min",
+    "hourSuffix": "h"
+  }
+}
