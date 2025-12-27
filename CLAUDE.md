@@ -31,6 +31,20 @@ vercel env pull           # Pull environment variables to .env.local
 
 Deployments trigger automatically on push to main.
 
+## Database (Supabase)
+
+Project "Internal" (ref: `vcpwmusyjpdbkxxmlbry`) - shared Supabase instance for internal apps. This app uses schema `mini_todo`.
+
+```bash
+npx supabase projects list              # List projects
+npx supabase link --project-ref <id>    # Link to project
+npx supabase db push                    # Apply migrations to remote
+npx supabase db pull                    # Pull remote schema
+npx supabase gen types typescript --linked > lib/database.types.ts  # Generate TS types
+npx supabase start                      # Local Supabase (Docker)
+npx supabase stop                       # Stop local instance
+```
+
 ## Architecture
 
 ### State Management
