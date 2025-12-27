@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 function Providers({ children }: { children: React.ReactNode }) {
   return (
     <Suspense fallback={<div className="min-h-screen bg-white dark:bg-gray-900" />}>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
         <AuthProvider>
           <I18nProvider>
             {children}
