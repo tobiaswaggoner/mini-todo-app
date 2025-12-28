@@ -2,7 +2,8 @@
 
 import type React from "react"
 import type { Todo, CategoryColorMapping, WeekdayDefault } from "@/lib/types"
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useMemo } from "react"
+import { useAllCategories } from "@/hooks/use-all-categories"
 import { useTranslations } from 'next-intl'
 import { format } from "date-fns"
 import { de, enUS } from "date-fns/locale"
@@ -58,6 +59,7 @@ export function BacklogView({
 }: BacklogViewProps) {
   const t = useTranslations()
   const { locale } = useI18n()
+  const { categories: allCategories } = useAllCategories()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null)
@@ -232,7 +234,7 @@ export function BacklogView({
           </CardHeader>
           <CardContent className="pt-0">
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-              <SortableContext items={todos} strategy={verticalListSortingStrategy}>
+              <SortableContext items={todos.map(t => t.id)} strategy={verticalListSortingStrategy}>
                 <div className="space-y-1">
                   {todos.length > 0 ? (
                     todos.map((todo) => (
@@ -274,7 +276,10 @@ export function BacklogView({
         onSave={handleSaveTodo}
         todo={editingTodo}
         selectedDate={selectedDate}
-        existingCategories={[...new Set(todos.map(t => t.category))].filter(Boolean).sort()}
+        existingCategories={[...new Set([
+          ...allCategories,
+          ...categoryColorMappings.map(m => m.category)
+        ])].filter(Boolean).sort()}
       />
 
       <SettingsDialog

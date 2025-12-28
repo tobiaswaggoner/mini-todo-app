@@ -63,6 +63,10 @@ Data persists in Supabase with Row Level Security (RLS). Each user sees only the
 ### Authentication
 OAuth via Supabase Auth (Google + GitHub). AuthProvider wraps the app in `layout.tsx`.
 
+**Test Account:**
+- Email: `claude@netzalist.de`
+- Password: `password`
+
 ### Component Hierarchy
 ```
 app/layout.tsx (ThemeProvider + AuthProvider)
